@@ -1,0 +1,4 @@
+[submodule "selling-partner-api-models"]
+	path = selling-partner-api-models
+	url = git@github.com:amzn/selling-partner-api-models.git
+	branch = main
