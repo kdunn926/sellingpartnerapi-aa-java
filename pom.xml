@@ -6,5 +6,6 @@
   <packaging>pom</packaging>
   <modules>
     <module>selling-partner-api-models/clients/sellingpartner-api-aa-java</module>
+    <module>swagger-spapi-generator</module>
   </modules>
 </project>
