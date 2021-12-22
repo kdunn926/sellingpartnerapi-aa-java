@@ -4,6 +4,7 @@ from json import dumps, load
 from functools import reduce
 from os import getcwd
 from glob import glob
+from sys import argv
 
 baseDir = getcwd() + "/../selling-partner-api-models/models"
 
@@ -18,7 +19,12 @@ except TypeError:
 
 jsonToDict = lambda f: load(open(f))
 
-allSpecs = [jsonToDict(s) for s in specs if "merged" not in s]
+specsToInclude = argv[1].split(",")
+shouldInclude = lambda s: reduce(lambda res, spec: spec in s or res, specsToInclude, False)
+
+print("\n\t".join(["Specs to include:"] + specsToInclude))
+
+allSpecs = [jsonToDict(s) for s in specs if shouldInclude(s)]
 
 if len(allSpecs):
     print("\n\t".join(["Using the following specs:"] + specs))

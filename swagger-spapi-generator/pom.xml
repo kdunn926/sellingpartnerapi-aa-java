@@ -13,6 +13,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <swagger.version>2.0.9</swagger.version>
+    <apis-to-include>ordersV0,reports_2021-06-30</apis-to-include>
   </properties>
 
   <dependencies>
@@ -81,6 +82,7 @@
               <workingDirectory>${project.basedir}</workingDirectory>
               <arguments>
                 <argument>doMerge.py</argument>
+                <argument>${apis-to-include}</argument>
               </arguments>
             </configuration>
           </execution>
