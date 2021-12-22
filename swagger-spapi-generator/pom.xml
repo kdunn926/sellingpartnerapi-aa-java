@@ -94,6 +94,7 @@
               <executable>rm</executable>
               <workingDirectory>${project.basedir}</workingDirectory>
               <arguments>
+                <argument>-f</argument>
                 <argument>merged.json</argument>
               </arguments>
             </configuration>
