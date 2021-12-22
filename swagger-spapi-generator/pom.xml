@@ -12,7 +12,7 @@
   <artifactId>swagger</artifactId>
   <version>2.1.11</version>
   <name>swagger-spapi-generator</name>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <java.version>11</java.version>
@@ -26,11 +26,6 @@
     </dependency>
 
     <!-- AWS SP-API dependencies -->
-    <!-- dependency>
-      <groupId>io.swagger</groupId>
-      <artifactId>swagger-annotations</artifactId>
-      <version>1.6.3</version>
-    </dependency -->
     <dependency>
       <groupId>io.gsonfire</groupId>
       <artifactId>gson-fire</artifactId>
@@ -41,11 +36,16 @@
       <artifactId>gson</artifactId>
       <version>2.8.9</version>
     </dependency>
-    <!-- dependency>
-      <groupId>com.squareup.okhttp3</groupId>
-      <artifactId>okhttp</artifactId>
-      <version>4.9.3</version>
-    </dependency -->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>31.0.1-jre</version>
+    </dependency>
+    <dependency>
+      <groupId>com.squareup.okhttp</groupId>
+      <artifactId>logging-interceptor</artifactId>
+      <version>2.7.5</version>
+    </dependency>
     <dependency>
       <groupId>com.squareup.okhttp</groupId>
       <artifactId>okhttp</artifactId>
@@ -66,16 +66,6 @@
       <artifactId>swagger-models</artifactId>
       <version>${swagger.version}</version>
     </dependency>
-    <!-- dependency>
-      <groupId>org.openapitools</groupId>
-      <artifactId>jackson-databind-nullable</artifactId>
-      <version>0.2.2</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
-      <version>1.3.2</version>
-    </dependency -->
   </dependencies>
 
   <build>
@@ -163,33 +153,29 @@
         </executions>
       </plugin>
 
-      <!-- plugin>
-        <groupId>org.openapitools</groupId>
-        <artifactId>openapi-generator-maven-plugin</artifactId>
-        <version>4.3.1</version>
-        <executions>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <!-- executions>
           <execution>
+            <id>copy-resources</id>
+            <phase>compile</phase>
             <goals>
-              <goal>generate</goal>
+              <goal>copy-resources</goal>
             </goals>
-            <phase>process-resources</phase>
-            <configuration>
-              <inputSpec>${project.basedir}/merged.json</inputSpec>
-              <generatorName>java</generatorName>
-              <configOptions>
-                <sourceFolder>src/gen/java/main</sourceFolder>
-                <dateLibrary>java8</dateLibrary>
-                <java8>true</java8>
-              </configOptions>
-              <library>webclient</library>
-              <templateDirectory>${project.basedir}/../selling-partner-api-models/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates</templateDirectory>
-              <apiPackage>com.amazonaws.SellingPartnerAPIAA.spapi</apiPackage>
-              <invokerPackage>com.amazonaws.SellingPartnerAPIAA.spapi.client</invokerPackage>
-              <modelPackage>com.amazonaws.SellingPartnerAPIAA.spapi.model</modelPackage>
-            </configuration>
           </execution>
-        </executions>
-      </plugin -->
+        </executions -->
+        <configuration>
+          <outputDirectory>${project.basedir}/target/</outputDirectory>
+          <resources>
+            <resource>
+              <directory>${project.basedir}/../selling-partner-api-models/clients/sellingpartner-api-aa-java/target/</directory>
+              <includes>
+                <include>**/*.class</include>
+              </includes>
+            </resource>
+          </resources>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
