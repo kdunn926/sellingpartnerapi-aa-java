@@ -9,7 +9,12 @@ baseDir = getcwd() + "/../selling-partner-api-models/models"
 
 print("Looking in directory: {}".format(baseDir))
 
-specs = glob("{}/**/*.json".format(baseDir), recursive=True)
+specs = []
+try:
+    specs = glob("{}/**/*.json".format(baseDir), recursive=True)
+except TypeError:
+    from subprocess import check_output
+    specs = check_output("ls {}/**/*.json".format(baseDir), shell=True).splitlines()
 
 jsonToDict = lambda f: load(open(f))
 
