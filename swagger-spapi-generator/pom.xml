@@ -77,7 +77,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>python3</executable>
+              <executable>python</executable>
               <workingDirectory>${project.basedir}</workingDirectory>
               <arguments>
                 <argument>doMerge.py</argument>
