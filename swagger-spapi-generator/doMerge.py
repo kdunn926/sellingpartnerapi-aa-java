@@ -34,13 +34,20 @@ else:
 
 updateAndReturn = lambda acc, d: acc.update(d) or acc
 
-mergeKeyInto = lambda obj, key: reduce(updateAndReturn, map(lambda spec: spec[key], allSpecs), obj)
+mergeKeyInto = lambda obj, key: reduce(updateAndReturn, map(lambda spec: spec.get(key, {}), allSpecs), obj)
 
-updateForKeyAndReturn = lambda acc, key, d: acc[key].update(d) or acc
+updateForKeyAndReturn = lambda acc, key, d: acc.get(key, {}).update(d) or acc
 
-keysToMerge = ['definitions', 'paths']
+keysToMerge = ['definitions', 'paths', 'parameters']
 
-merged = reduce(lambda res, key: res[key].update(mergeKeyInto(res[key], key)) or res, keysToMerge, allSpecs[0])
+# Ensure all necessary keys are in the base spec
+emptySpec = { k: dict() for k in keysToMerge if k not in allSpecs[0].keys() }
+allSpecs[0].update(emptySpec)
+
+merged = reduce(lambda res, key: res.get(key, {}).update(mergeKeyInto(res.get(key, {}), key)) or res,
+                keysToMerge,
+                allSpecs[0]
+)
 
 outputFile = "merged.json"
 with open(outputFile, 'w') as f:

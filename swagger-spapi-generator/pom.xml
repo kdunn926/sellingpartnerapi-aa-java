@@ -13,7 +13,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <swagger.version>2.0.9</swagger.version>
-    <apis-to-include>ordersV0,reports_2021-06-30,feeds_2021-06-30</apis-to-include>
+    <apis-to-include>ordersV0,reports_2021-06-30,feeds_2021-06-30,notifications</apis-to-include>
   </properties>
 
   <dependencies>
@@ -101,6 +101,11 @@
               </arguments>
             </configuration>
           </execution>
+          <!-- 
+               perl -pi -e
+               's/()/(String)/'
+               target/generated-sources/swagger/src/main/java/io/swagger/client/model/VerificationStatus.java
+          -->
           <execution>
             <id>kluge fix syntax in ShipmentStatus.java</id>
             <phase>process-resources</phase>
@@ -110,7 +115,6 @@
             <configuration>
               <executable>perl</executable>
               <workingDirectory>${project.basedir}/target/generated-sources/swagger/src/main/java/com/amazonaws/SellingPartnerAPIAA/spapi/model</workingDirectory>
-              <!-- sed -i '' -e 's/()/(String)/' target/generated-sources/swagger/src/main/java/io/swagger/client/model/ShipmentStatus.java -->
               <arguments>
                 <argument>-pi</argument>
                 <argument>-e</argument>
@@ -128,12 +132,28 @@
             <configuration>
               <executable>perl</executable>
               <workingDirectory>${project.basedir}/target/generated-sources/swagger/src/main/java/com/amazonaws/SellingPartnerAPIAA/spapi/model</workingDirectory>
-              <!-- sed -i '' -e 's/()/(String)/' target/generated-sources/swagger/src/main/java/io/swagger/client/model/VerificationStatus.java -->
               <arguments>
                 <argument>-pi</argument>
                 <argument>-e</argument>
                 <argument>s/\(\(\)\(/((String)(/</argument>
                 <argument>VerificationStatus.java</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>kluge fix syntax in AggregationTimePeriod.java</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>perl</executable>
+              <workingDirectory>${project.basedir}/target/generated-sources/swagger/src/main/java/com/amazonaws/SellingPartnerAPIAA/spapi/model</workingDirectory>
+              <arguments>
+                <argument>-pi</argument>
+                <argument>-e</argument>
+                <argument>s/\(\(\)\(/((String)(/</argument>
+                <argument>AggregationTimePeriod.java</argument>
               </arguments>
             </configuration>
           </execution>
