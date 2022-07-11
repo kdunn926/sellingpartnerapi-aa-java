@@ -13,7 +13,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <swagger.version>2.0.9</swagger.version>
-    <apis-to-include>ordersV0,reports_2021-06-30,feeds_2021-06-30,notifications</apis-to-include>
+    <apis-to-include>ordersV0,reports_2021-06-30,feeds_2021-06-30,notifications,supplySource</apis-to-include>
   </properties>
 
   <dependencies>
@@ -71,6 +71,21 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.6.0</version>
         <executions>
+          <execution>
+            <id>add the out-of-tree Supply Source spec</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>cp</executable>
+              <workingDirectory>${project.basedir}/../lib/</workingDirectory>
+              <arguments>
+                <argument>supplySources_2020-07-01.json</argument>
+                <argument>${project.basedir}/../selling-partner-api-models/models/</argument>
+              </arguments>
+            </configuration>
+          </execution>
           <execution>
             <id>merge AWS SP-API specs</id>
             <phase>process-sources</phase>
@@ -154,6 +169,74 @@
                 <argument>-e</argument>
                 <argument>s/\(\(\)\(/((String)(/</argument>
                 <argument>AggregationTimePeriod.java</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>kluge fix syntax in TimeUnit.java</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>perl</executable>
+              <workingDirectory>${project.basedir}/target/generated-sources/swagger/src/main/java/com/amazonaws/SellingPartnerAPIAA/spapi/model</workingDirectory>
+              <arguments>
+                <argument>-pi</argument>
+                <argument>-e</argument>
+                <argument>s/\(\(\)\(/((String)(/</argument>
+                <argument>TimeUnit.java</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>kluge fix syntax in ThroughputUnit.java</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>perl</executable>
+              <workingDirectory>${project.basedir}/target/generated-sources/swagger/src/main/java/com/amazonaws/SellingPartnerAPIAA/spapi/model</workingDirectory>
+              <arguments>
+                <argument>-pi</argument>
+                <argument>-e</argument>
+                <argument>s/\(\(\)\(/((String)(/</argument>
+                <argument>ThroughputUnit.java</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>kluge fix syntax in SupplySourceStatusReadOnly.java</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>perl</executable>
+              <workingDirectory>${project.basedir}/target/generated-sources/swagger/src/main/java/com/amazonaws/SellingPartnerAPIAA/spapi/model</workingDirectory>
+              <arguments>
+                <argument>-pi</argument>
+                <argument>-e</argument>
+                <argument>s/\(\(\)\(/((String)(/</argument>
+                <argument>SupplySourceStatusReadOnly.java</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>kluge fix syntax in SupplySourceStatus.java</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>perl</executable>
+              <workingDirectory>${project.basedir}/target/generated-sources/swagger/src/main/java/com/amazonaws/SellingPartnerAPIAA/spapi/model</workingDirectory>
+              <arguments>
+                <argument>-pi</argument>
+                <argument>-e</argument>
+                <argument>s/\(\(\)\(/((String)(/</argument>
+                <argument>SupplySourceStatus.java</argument>
               </arguments>
             </configuration>
           </execution>
