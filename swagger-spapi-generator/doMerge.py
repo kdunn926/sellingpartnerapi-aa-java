@@ -13,6 +13,7 @@ print("Looking in directory: {}".format(baseDir))
 specs = []
 try:
     specs = glob("{}/**/*.json".format(baseDir), recursive=True)
+    specs = specs + glob("{}/../lib/*.json".format(getcwd()), recursive=True)
 except TypeError:
     from subprocess import check_output
     specs = check_output("ls -r {}/**/*.json".format(baseDir), shell=True).splitlines()
