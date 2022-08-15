@@ -15,7 +15,7 @@ try:
     specs = glob("{}/**/*.json".format(baseDir), recursive=True)
 except TypeError:
     from subprocess import check_output
-    specs = check_output("ls {}/**/*.json".format(baseDir), shell=True).splitlines()
+    specs = check_output("ls -r {}/**/*.json".format(baseDir), shell=True).splitlines()
 
 jsonToDict = lambda f: load(open(f))
 
@@ -48,6 +48,9 @@ merged = reduce(lambda res, key: res.get(key, {}).update(mergeKeyInto(res.get(ke
                 keysToMerge,
                 allSpecs[0]
 )
+
+merged.update({ "consumes": ["application/json"] })
+merged.update({ "produces": ["application/json"] })
 
 outputFile = "merged.json"
 with open(outputFile, 'w') as f:
