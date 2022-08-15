@@ -15,8 +15,10 @@ try:
     specs = glob("{}/**/*.json".format(baseDir), recursive=True)
     specs = specs + glob("{}/../lib/*.json".format(getcwd()), recursive=True)
 except TypeError:
+    # This is used by Jitpack
     from subprocess import check_output
     specs = check_output("ls -r {}/**/*.json".format(baseDir), shell=True).splitlines()
+    specs = specs + check_output("ls -r {}/../lib/*.json".format(getcwd()), shell=True).splitlines()
 
 jsonToDict = lambda f: load(open(f))
 
