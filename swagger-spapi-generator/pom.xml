@@ -240,7 +240,7 @@
               </arguments>
             </configuration>
           </execution>
-          <execution>
+          <!-- execution>
             <id>kluge fix syntax in EasyShipShipmentStatus.java</id>
             <phase>process-resources</phase>
             <goals>
@@ -273,7 +273,7 @@
                 <argument>ElectronicInvoiceStatus.java</argument>
               </arguments>
             </configuration>
-          </execution>
+          </execution -->
         </executions>
       </plugin>
 
