@@ -95,7 +95,7 @@
           "$ref": "#/definitions/SupplySourceAlias"
         },
         "address": {
-          "$ref": "#/definitions/Address"
+          "$ref": "#/definitions/PhysicalAddress"
         }
       },
       "required": [
@@ -152,7 +152,7 @@
           "$ref": "#/definitions/SupplySourceStatusReadOnly"
         },
         "address": {
-          "$ref": "#/definitions/Address"
+          "$ref": "#/definitions/PhysicalAddress"
         },
         "configuration": {
           "$ref": "#/definitions/SupplySourceConfiguration"
@@ -206,7 +206,7 @@
             "$ref": "#/definitions/SupplySourceCode"
           },
           "address": {
-            "$ref": "#/definitions/Address"
+            "$ref": "#/definitions/PhysicalAddress"
           }
         }
       }
@@ -354,7 +354,7 @@
           "$ref": "#/definitions/ContactDetails"
         },
         "address": {
-          "$ref": "#/definitions/Address"
+          "$ref": "#/definitions/PhysicalAddress"
         }
       }
     },
@@ -462,7 +462,7 @@
       "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$",
       "type": "string"
     },
-    "Address": {
+    "PhysicalAddress": {
       "description": "A physical address.",
       "properties": {
         "name": {
