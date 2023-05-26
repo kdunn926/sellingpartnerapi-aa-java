@@ -27,10 +27,12 @@ shouldInclude = lambda s: reduce(lambda res, spec: spec in s or res, specsToIncl
 
 print("\n\t".join(["Specs to include:"] + specsToInclude))
 
-allSpecs = [jsonToDict(s) for s in specs if shouldInclude(s)]
+specSubset = [s for s in specs if shouldInclude(s)]
+
+allSpecs = [jsonToDict(s) for s in specSubset]
 
 if len(allSpecs):
-    print("\n\t".join(["Using the following specs:"] + specs))
+    print("\n\t".join(["Using the following specs:"] + specSubset))
 else:
     print("[ERROR] No specs found")
     exit(1)

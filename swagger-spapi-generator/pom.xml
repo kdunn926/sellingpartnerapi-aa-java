@@ -13,7 +13,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <swagger.version>2.0.9</swagger.version>
-    <apis-to-include>authorization,fix-auth,ordersV0,reports_2021-06-30,feeds_2021-06-30,notifications,supplySource,tokens</apis-to-include>
+    <apis-to-include>authorization,ordersV0,reports_2021-06-30,feeds_2021-06-30,notifications,supplySource,tokens</apis-to-include>
   </properties>
 
   <dependencies>
@@ -240,40 +240,6 @@
               </arguments>
             </configuration>
           </execution>
-          <!-- execution>
-            <id>kluge fix syntax in EasyShipShipmentStatus.java</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>perl</executable>
-              <workingDirectory>${project.basedir}/target/generated-sources/swagger/src/main/java/com/amazonaws/SellingPartnerAPIAA/spapi/model</workingDirectory>
-              <arguments>
-                <argument>-pi</argument>
-                <argument>-e</argument>
-                <argument>s/\(\(\)\(/((String)(/</argument>
-                <argument>EasyShipShipmentStatus.java</argument>
-              </arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>kluge fix syntax in ElectronicInvoiceStatus.java</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>perl</executable>
-              <workingDirectory>${project.basedir}/target/generated-sources/swagger/src/main/java/com/amazonaws/SellingPartnerAPIAA/spapi/model</workingDirectory>
-              <arguments>
-                <argument>-pi</argument>
-                <argument>-e</argument>
-                <argument>s/\(\(\)\(/((String)(/</argument>
-                <argument>ElectronicInvoiceStatus.java</argument>
-              </arguments>
-            </configuration>
-          </execution -->
         </executions>
       </plugin>
 
@@ -297,11 +263,6 @@
             <configuration>
               <inputSpec>${project.basedir}/merged.json</inputSpec>
               <language>java</language>
-              <!-- configOptions>
-                <sourceFolder>src/gen/java/main</sourceFolder>
-                <dateLibrary>java8</dateLibrary>
-                <java8>true</java8>
-              </configOptions -->
               <library>okhttp-gson</library>
               <templateDirectory>${project.basedir}/../selling-partner-api-models/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates</templateDirectory>
               <apiPackage>com.amazonaws.SellingPartnerAPIAA.spapi</apiPackage>
