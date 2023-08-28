@@ -22,10 +22,13 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>git</executable>
+              <!-- executable>git</executable -->
+              <executable>patch</executable>
               <workingDirectory>${project.basedir}/../selling-partner-api-models/</workingDirectory>
               <arguments>
-                <argument>apply</argument>
+                <!-- argument>apply</argument -->
+                <argument>-p1</argument>
+                <argument>-i</argument>
                 <argument>${project.basedir}/okhttp4_support.patch</argument>
               </arguments>
             </configuration>
