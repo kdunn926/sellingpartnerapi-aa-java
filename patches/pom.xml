@@ -58,6 +58,11 @@
                 <argument>-R</argument>
                 <argument>${project.basedir}/okhttp4_support.patch</argument>
               </arguments>
+              <successCodes>
+                <successCode>0</successCode>
+                <!-- gracefully handle the case when `mvn clean` is run first (i.e. in jitpack process) -->
+                <successCode>1</successCode>
+              </successCodes>
             </configuration>
           </execution>
         </executions>
