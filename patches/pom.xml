@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.amazon.SellingPartnerAPIAA</groupId>
+  <artifactId>spapi-patches</artifactId>
+  <version>1.0.1</version>
+  <name>project-patches</name>
+  <packaging>pom</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <executions>
+          <execution>
+            <id>apply patch to amzn/selling-partner-api-models for okhttp4 support</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>git</executable>
+              <workingDirectory>${project.basedir}/../selling-partner-api-models/</workingDirectory>
+              <arguments>
+                <argument>apply</argument>
+                <argument>${project.basedir}/okhttp4_support.patch</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>rebuild amzn/selling-partner-api-models</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>mvn</executable>
+              <workingDirectory>${project.basedir}/../selling-partner-api-models/clients/sellingpartner-api-aa-java</workingDirectory>
+              <arguments>
+                <argument>compile</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>revert patch to amzn/selling-partner-api-models for okhttp4 support</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>git</executable>
+              <workingDirectory>${project.basedir}/../selling-partner-api-models/</workingDirectory>
+              <arguments>
+                <argument>apply</argument>
+                <argument>-R</argument>
+                <argument>${project.basedir}/okhttp4_support.patch</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

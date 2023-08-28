@@ -1,0 +1,403 @@
+diff --git a/clients/sellingpartner-api-aa-java/pom.xml b/clients/sellingpartner-api-aa-java/pom.xml
+index b209b2c..1656684 100644
+--- a/clients/sellingpartner-api-aa-java/pom.xml
++++ b/clients/sellingpartner-api-aa-java/pom.xml
+@@ -12,10 +12,10 @@
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-compiler-plugin</artifactId>
+-                <version>3.1</version>
++                <version>3.11.0</version>
+                 <configuration>
+-                    <source>1.8</source>
+-                    <target>1.8</target>
++                    <source>11</source>
++                    <target>11</target>
+                 </configuration>
+             </plugin>
+             <plugin>
+@@ -53,8 +53,7 @@
+         <dependency>
+             <groupId>org.projectlombok</groupId>
+             <artifactId>lombok</artifactId>
+-            <version>1.18.8</version>
+-            <scope>provided</scope>
++            <version>1.18.26</version>
+         </dependency>
+         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+         <dependency>
+@@ -64,9 +63,9 @@
+         </dependency>
+         <!-- https://mvnrepository.com/artifact/com.squareup.okhttp/okhttp -->
+         <dependency>
+-            <groupId>com.squareup.okhttp</groupId>
++            <groupId>com.squareup.okhttp3</groupId>
+             <artifactId>okhttp</artifactId>
+-            <version>2.7.5</version>
++            <version>4.10.0</version>
+         </dependency>
+         <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
+         <dependency>
+diff --git a/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates/ApiClient.mustache b/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates/ApiClient.mustache
+index 993d2e2..d524c8f 100644
+--- a/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates/ApiClient.mustache
++++ b/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates/ApiClient.mustache
+@@ -2,10 +2,10 @@
+ 
+ package {{invokerPackage}};
+ 
+-import com.squareup.okhttp.*;
+-import com.squareup.okhttp.internal.http.HttpMethod;
+-import com.squareup.okhttp.logging.HttpLoggingInterceptor;
+-import com.squareup.okhttp.logging.HttpLoggingInterceptor.Level;
++import okhttp3.*;
++import okhttp3.internal.http.HttpMethod;
++import okhttp3.logging.HttpLoggingInterceptor;
++import okhttp3.logging.HttpLoggingInterceptor.Level;
+ import okio.BufferedSink;
+ import okio.Okio;
+ {{#joda}}
+@@ -426,7 +426,7 @@ public class ApiClient {
+      * @return Timeout in milliseconds
+      */
+     public int getConnectTimeout() {
+-        return httpClient.getConnectTimeout();
++        return httpClient.connectTimeoutMillis();
+     }
+ 
+     /**
+@@ -438,7 +438,10 @@ public class ApiClient {
+      * @return Api client
+      */
+     public ApiClient setConnectTimeout(int connectionTimeout) {
+-        httpClient.setConnectTimeout(connectionTimeout, TimeUnit.MILLISECONDS);
++        this.httpClient = httpClient.newBuilder()
++          .connectTimeout(connectionTimeout, TimeUnit.MILLISECONDS)
++          .build();
++
+         return this;
+     }
+ 
+@@ -448,7 +451,7 @@ public class ApiClient {
+      * @return Timeout in milliseconds
+      */
+     public int getReadTimeout() {
+-        return httpClient.getReadTimeout();
++        return httpClient.readTimeoutMillis();
+     }
+ 
+     /**
+@@ -460,7 +463,10 @@ public class ApiClient {
+      * @return Api client
+      */
+     public ApiClient setReadTimeout(int readTimeout) {
+-        httpClient.setReadTimeout(readTimeout, TimeUnit.MILLISECONDS);
++        this.httpClient = httpClient.newBuilder()
++          .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
++          .build();
++
+         return this;
+     }
+ 
+@@ -470,7 +476,7 @@ public class ApiClient {
+      * @return Timeout in milliseconds
+      */
+     public int getWriteTimeout() {
+-        return httpClient.getWriteTimeout();
++        return httpClient.writeTimeoutMillis();
+     }
+ 
+     /**
+@@ -482,7 +488,10 @@ public class ApiClient {
+      * @return Api client
+      */
+     public ApiClient setWriteTimeout(int writeTimeout) {
+-        httpClient.setWriteTimeout(writeTimeout, TimeUnit.MILLISECONDS);
++        this.httpClient = httpClient.newBuilder()
++          .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS)
++          .build();
++
+         return this;
+     }
+ 
+@@ -914,12 +923,12 @@ public class ApiClient {
+     public <T> void executeAsync(Call call, final Type returnType, final ApiCallback<T> callback) {
+         call.enqueue(new Callback() {
+             @Override
+-            public void onFailure(Request request, IOException e) {
++            public void onFailure(Call call, IOException e) {
+                 callback.onFailure(new ApiException(e), 0, null);
+             }
+ 
+             @Override
+-            public void onResponse(Response response) throws IOException {
++            public void onResponse(Call call, Response response) throws IOException {
+                 T result;
+                 try {
+                     result = (T) handleResponse(response, returnType);
+@@ -948,11 +957,11 @@ public class ApiClient {
+                 // returning null if the returnType is not defined,
+                 // or the status code is 204 (No Content)
+                 if (response.body() != null) {
+-                    try {
++                    //try {
+                         response.body().close();
+-                    } catch (IOException e) {
+-                        throw new ApiException(response.message(), e, response.code(), response.headers().toMultimap());
+-                    }
++                    //} catch (IOException e) {
++                    //    throw new ApiException(response.message(), e, response.code(), response.headers().toMultimap());
++                    //}
+                 }
+                 return null;
+             } else {
+@@ -1142,11 +1151,11 @@ public class ApiClient {
+      * @return RequestBody
+      */
+     public RequestBody buildRequestBodyFormEncoding(Map<String, Object> formParams) {
+-        FormEncodingBuilder formBuilder  = new FormEncodingBuilder();
++        FormBody.Builder formBody = new FormBody.Builder();
+         for (Entry<String, Object> param : formParams.entrySet()) {
+-            formBuilder.add(param.getKey(), parameterToString(param.getValue()));
++            formBody.add(param.getKey(), parameterToString(param.getValue()));
+         }
+-        return formBuilder.build();
++        return formBody.build();
+     }
+ 
+     /**
+@@ -1157,7 +1166,7 @@ public class ApiClient {
+      * @return RequestBody
+      */
+     public RequestBody buildRequestBodyMultipart(Map<String, Object> formParams) {
+-        MultipartBuilder mpBuilder = new MultipartBuilder().type(MultipartBuilder.FORM);
++        MultipartBody.Builder mpBuilder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+         for (Entry<String, Object> param : formParams.entrySet()) {
+             if (param.getValue() instanceof File) {
+                 File file = (File) param.getValue();
+@@ -1216,11 +1225,17 @@ public class ApiClient {
+             if (keyManagers != null || trustManagers != null) {
+                 SSLContext sslContext = SSLContext.getInstance("TLS");
+                 sslContext.init(keyManagers, trustManagers, new SecureRandom());
+-                httpClient.setSslSocketFactory(sslContext.getSocketFactory());
++                this.httpClient = httpClient.newBuilder()
++                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager)trustManagers[0])
++                    .build();
+             } else {
+-                httpClient.setSslSocketFactory(null);
++                this.httpClient = httpClient.newBuilder()
++                    .sslSocketFactory(null)
++                    .build();
+             }
+-            httpClient.setHostnameVerifier(hostnameVerifier);
++            this.httpClient = httpClient.newBuilder()
++                .hostnameVerifier(hostnameVerifier)
++                .build();
+         } catch (GeneralSecurityException e) {
+             throw new RuntimeException(e);
+         }
+diff --git a/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates/api.mustache b/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates/api.mustache
+index 8850f1a..cec93e2 100644
+--- a/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates/api.mustache
++++ b/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates/api.mustache
+@@ -92,7 +92,7 @@ public class {{classname}} {
+     {{#isDeprecated}}
+     @Deprecated
+     {{/isDeprecated}}
+-    public com.squareup.okhttp.Call {{operationId}}Call({{#allParams}}{{{dataType}}} {{paramName}}, {{/allParams}}final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
++    public okhttp3.Call {{operationId}}Call({{#allParams}}{{{dataType}}} {{paramName}}, {{/allParams}}final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+         Object {{localVariablePrefix}}localVarPostBody = {{#bodyParam}}{{paramName}}{{/bodyParam}}{{^bodyParam}}null{{/bodyParam}};
+ 
+         // create path and map variables
+@@ -125,10 +125,10 @@ public class {{classname}} {
+         {{localVariablePrefix}}localVarHeaderParams.put("Content-Type", {{localVariablePrefix}}localVarContentType);
+ 
+         if(progressListener != null) {
+-            apiClient.getHttpClient().networkInterceptors().add(new com.squareup.okhttp.Interceptor() {
++            apiClient.getHttpClient().networkInterceptors().add(new okhttp3.Interceptor() {
+                 @Override
+-                public com.squareup.okhttp.Response intercept(com.squareup.okhttp.Interceptor.Chain chain) throws IOException {
+-                    com.squareup.okhttp.Response originalResponse = chain.proceed(chain.request());
++                public okhttp3.Response intercept(okhttp3.Interceptor.Chain chain) throws IOException {
++                    okhttp3.Response originalResponse = chain.proceed(chain.request());
+                     return originalResponse.newBuilder()
+                     .body(new ProgressResponseBody(originalResponse.body(), progressListener))
+                     .build();
+@@ -144,7 +144,7 @@ public class {{classname}} {
+     @Deprecated
+     {{/isDeprecated}}
+     @SuppressWarnings("rawtypes")
+-    private com.squareup.okhttp.Call {{operationId}}ValidateBeforeCall({{#allParams}}{{{dataType}}} {{paramName}}, {{/allParams}}final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
++    private okhttp3.Call {{operationId}}ValidateBeforeCall({{#allParams}}{{{dataType}}} {{paramName}}, {{/allParams}}final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+         {{^performBeanValidation}}
+         {{#allParams}}{{#required}}
+         // verify the required parameter '{{paramName}}' is set
+@@ -153,7 +153,7 @@ public class {{classname}} {
+         }
+         {{/required}}{{/allParams}}
+ 
+-        com.squareup.okhttp.Call {{localVariablePrefix}}call = {{operationId}}Call({{#allParams}}{{paramName}}, {{/allParams}}progressListener, progressRequestListener);
++        okhttp3.Call {{localVariablePrefix}}call = {{operationId}}Call({{#allParams}}{{paramName}}, {{/allParams}}progressListener, progressRequestListener);
+         return {{localVariablePrefix}}call;
+ 
+         {{/performBeanValidation}}
+@@ -168,7 +168,7 @@ public class {{classname}} {
+                     parameterValues);
+ 
+             if (violations.size() == 0) {
+-                com.squareup.okhttp.Call {{localVariablePrefix}}call = {{operationId}}Call({{#allParams}}{{paramName}}, {{/allParams}}progressListener, progressRequestListener);
++                okhttp3.Call {{localVariablePrefix}}call = {{operationId}}Call({{#allParams}}{{paramName}}, {{/allParams}}progressListener, progressRequestListener);
+                 return {{localVariablePrefix}}call;
+ 
+             } else {
+@@ -225,7 +225,7 @@ public class {{classname}} {
+     @Deprecated
+     {{/isDeprecated}}
+     public ApiResponse<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}> {{operationId}}WithHttpInfo({{#allParams}}{{#useBeanValidation}}{{>beanValidationQueryParams}}{{/useBeanValidation}}{{{dataType}}} {{paramName}}{{#hasMore}}, {{/hasMore}}{{/allParams}}) throws ApiException {
+-        com.squareup.okhttp.Call {{localVariablePrefix}}call = {{operationId}}ValidateBeforeCall({{#allParams}}{{paramName}}, {{/allParams}}null, null);
++        okhttp3.Call {{localVariablePrefix}}call = {{operationId}}ValidateBeforeCall({{#allParams}}{{paramName}}, {{/allParams}}null, null);
+         {{#returnType}}Type {{localVariablePrefix}}localVarReturnType = new TypeToken<{{{returnType}}}>(){}.getType();
+         return {{localVariablePrefix}}apiClient.execute({{localVariablePrefix}}call, {{localVariablePrefix}}localVarReturnType);{{/returnType}}{{^returnType}}return {{localVariablePrefix}}apiClient.execute({{localVariablePrefix}}call);{{/returnType}}
+     }
+@@ -248,7 +248,7 @@ public class {{classname}} {
+     {{#isDeprecated}}
+     @Deprecated
+     {{/isDeprecated}}
+-    public com.squareup.okhttp.Call {{operationId}}Async({{#allParams}}{{{dataType}}} {{paramName}}, {{/allParams}}final ApiCallback<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}> {{localVariablePrefix}}callback) throws ApiException {
++    public okhttp3.Call {{operationId}}Async({{#allParams}}{{{dataType}}} {{paramName}}, {{/allParams}}final ApiCallback<{{#returnType}}{{{returnType}}}{{/returnType}}{{^returnType}}Void{{/returnType}}> {{localVariablePrefix}}callback) throws ApiException {
+ 
+         ProgressResponseBody.ProgressListener progressListener = null;
+         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
+@@ -269,7 +269,7 @@ public class {{classname}} {
+             };
+         }
+ 
+-        com.squareup.okhttp.Call {{localVariablePrefix}}call = {{operationId}}ValidateBeforeCall({{#allParams}}{{paramName}}, {{/allParams}}progressListener, progressRequestListener);
++        okhttp3.Call {{localVariablePrefix}}call = {{operationId}}ValidateBeforeCall({{#allParams}}{{paramName}}, {{/allParams}}progressListener, progressRequestListener);
+         {{#returnType}}Type {{localVariablePrefix}}localVarReturnType = new TypeToken<{{{returnType}}}>(){}.getType();
+         {{localVariablePrefix}}apiClient.executeAsync({{localVariablePrefix}}call, {{localVariablePrefix}}localVarReturnType, {{localVariablePrefix}}callback);{{/returnType}}{{^returnType}}{{localVariablePrefix}}apiClient.executeAsync({{localVariablePrefix}}call, {{localVariablePrefix}}callback);{{/returnType}}
+         return {{localVariablePrefix}}call;
+@@ -375,4 +375,4 @@ public class {{classname}} {
+         }
+     }
+ }
+-{{/operations}}
+\ No newline at end of file
++{{/operations}}
+diff --git a/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/AWSSigV4Signer.java b/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/AWSSigV4Signer.java
+index 5fccb76..2cc85cf 100644
+--- a/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/AWSSigV4Signer.java
++++ b/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/AWSSigV4Signer.java
+@@ -5,7 +5,7 @@ import com.amazonaws.auth.AWS4Signer;
+ import com.amazonaws.auth.AWSCredentials;
+ import com.amazonaws.auth.AWSCredentialsProvider;
+ import com.amazonaws.auth.BasicAWSCredentials;
+-import com.squareup.okhttp.Request;
++import okhttp3.Request;
+ import lombok.AccessLevel;
+ import lombok.Getter;
+ import lombok.Setter;
+diff --git a/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/LWAAuthorizationSigner.java b/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/LWAAuthorizationSigner.java
+index 26cc1c4..7f49847 100644
+--- a/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/LWAAuthorizationSigner.java
++++ b/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/LWAAuthorizationSigner.java
+@@ -1,6 +1,6 @@
+ package com.amazon.SellingPartnerAPIAA;
+ 
+-import com.squareup.okhttp.Request;
++import okhttp3.Request;
+ import lombok.AccessLevel;
+ import lombok.Getter;
+ import lombok.Setter;
+diff --git a/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/LWAClient.java b/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/LWAClient.java
+index 7ef428d..1133ccf 100644
+--- a/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/LWAClient.java
++++ b/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/LWAClient.java
+@@ -3,11 +3,11 @@ package com.amazon.SellingPartnerAPIAA;
+ import com.google.gson.Gson;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParser;
+-import com.squareup.okhttp.MediaType;
+-import com.squareup.okhttp.OkHttpClient;
+-import com.squareup.okhttp.Request;
+-import com.squareup.okhttp.RequestBody;
+-import com.squareup.okhttp.Response;
++import okhttp3.MediaType;
++import okhttp3.OkHttpClient;
++import okhttp3.Request;
++import okhttp3.RequestBody;
++import okhttp3.Response;
+ import lombok.AccessLevel;
+ import lombok.Getter;
+ import lombok.Setter;
+diff --git a/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/SignableRequestImpl.java b/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/SignableRequestImpl.java
+index 636634a..ba3d796 100644
+--- a/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/SignableRequestImpl.java
++++ b/clients/sellingpartner-api-aa-java/src/com/amazon/SellingPartnerAPIAA/SignableRequestImpl.java
+@@ -3,9 +3,9 @@ package com.amazon.SellingPartnerAPIAA;
+ import com.amazonaws.ReadLimitInfo;
+ import com.amazonaws.SignableRequest;
+ import com.amazonaws.http.HttpMethodName;
+-import com.squareup.okhttp.HttpUrl;
+-import com.squareup.okhttp.MediaType;
+-import com.squareup.okhttp.Request;
++import okhttp3.HttpUrl;
++import okhttp3.MediaType;
++import okhttp3.Request;
+ import okio.Buffer;
+ import org.apache.http.NameValuePair;
+ import org.apache.http.client.utils.URLEncodedUtils;
+@@ -39,7 +39,7 @@ class SignableRequestImpl implements SignableRequest<Request> {
+     @Override
+     public void addParameter(String name, String value) {
+         HttpUrl newUrl = signableRequestBuilder.build()
+-                .httpUrl()
++                .url() //httpUrl()
+                 .newBuilder()
+                 .addEncodedQueryParameter(name, value)
+                 .build();
+@@ -73,21 +73,21 @@ class SignableRequestImpl implements SignableRequest<Request> {
+ 
+     @Override
+     public String getResourcePath() {
+-        return originalRequest.url()
++        return originalRequest.url().url()
+                 .getPath();
+     }
+ 
+     @Override
+     public Map<String, List<String>> getParameters() {
+         Map<String, List<String>> parameters = new HashMap<>();
+-        try {
+-            List<NameValuePair> nameValuePairs = URLEncodedUtils.parse(originalRequest.url().toURI(),
++        //try {
++            List<NameValuePair> nameValuePairs = URLEncodedUtils.parse(originalRequest.url().uri(),
+                     StandardCharsets.UTF_8);
+             nameValuePairs.forEach(nameValuePair -> parameters.put(nameValuePair.getName(),
+                     Collections.singletonList(nameValuePair.getValue())));
+-        } catch (URISyntaxException e) {
+-            throw new RuntimeException(e);
+-        }
++        //} catch (URISyntaxException e) {
++        //    throw new RuntimeException(e);
++        //}
+ 
+         return parameters;
+     }
+@@ -95,11 +95,11 @@ class SignableRequestImpl implements SignableRequest<Request> {
+     @Override
+     public URI getEndpoint() {
+         URI uri = null;
+-        try {
+-            uri = originalRequest.url().toURI();
+-        } catch (URISyntaxException e) {
+-            throw new RuntimeException(e);
+-        }
++        //try {
++            uri = originalRequest.url().uri();
++        //} catch (URISyntaxException e) {
++        //    throw new RuntimeException(e);
++        //}
+ 
+         return URI.create(String.format("%s://%s", uri.getScheme(), uri.getHost()));
+     }
