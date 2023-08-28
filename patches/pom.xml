@@ -62,6 +62,7 @@
                 <successCode>0</successCode>
                 <!-- gracefully handle the case when `mvn clean` is run first (i.e. in jitpack process) -->
                 <successCode>1</successCode>
+                <successCode>128</successCode>
               </successCodes>
             </configuration>
           </execution>
