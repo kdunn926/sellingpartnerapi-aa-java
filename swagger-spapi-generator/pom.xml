@@ -20,6 +20,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-sts</artifactId>
+      <version>1.11.236</version>
+    </dependency>
+    <dependency>
       <groupId>io.gsonfire</groupId>
       <artifactId>gson-fire</artifactId>
       <version>1.8.5</version>
