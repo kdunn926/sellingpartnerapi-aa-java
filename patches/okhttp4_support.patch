@@ -39,7 +39,7 @@ index b209b2c..1656684 100644
          <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine -->
          <dependency>
 diff --git a/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates/ApiClient.mustache b/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates/ApiClient.mustache
-index 993d2e2..d524c8f 100644
+index 993d2e2..8924b8d 100644
 --- a/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates/ApiClient.mustache
 +++ b/clients/sellingpartner-api-aa-java/resources/swagger-codegen/templates/ApiClient.mustache
 @@ -2,10 +2,10 @@
@@ -57,6 +57,24 @@ index 993d2e2..d524c8f 100644
  import okio.BufferedSink;
  import okio.Okio;
  {{#joda}}
+@@ -91,7 +91,7 @@ public class ApiClient {
+ 
+         {{#useGzipFeature}}
+         // Enable gzip request compression
+-        httpClient.interceptors().add(new GzipRequestInterceptor());
++        httpClient = httpClient.newBuilder().addInterceptor(new GzipRequestInterceptor()).build();
+         {{/useGzipFeature}}
+ 
+         json = new JSON();
+@@ -387,7 +387,7 @@ public class ApiClient {
+             if (debugging) {
+                 loggingInterceptor = new HttpLoggingInterceptor();
+                 loggingInterceptor.setLevel(Level.BODY);
+-                httpClient.interceptors().add(loggingInterceptor);
++                httpClient = httpClient.newBuilder().addInterceptor(loggingInterceptor).build();
+             } else {
+                 httpClient.interceptors().remove(loggingInterceptor);
+                 loggingInterceptor = null;
 @@ -426,7 +426,7 @@ public class ApiClient {
       * @return Timeout in milliseconds
       */
@@ -120,6 +138,15 @@ index 993d2e2..d524c8f 100644
          return this;
      }
  
+@@ -519,7 +528,7 @@ public class ApiClient {
+ 
+               //Add rateLimiter to httpclient interceptor for execute
+               RateLimitInterceptor rateLimiterInterceptor = new RateLimitInterceptor(rateLimiter, rateLimitConfiguration);
+-              httpClient.interceptors().add(rateLimiterInterceptor);
++              httpClient = httpClient.newBuilder().addInterceptor(rateLimiterInterceptor).build();
+           }
+             return this;
+      }
 @@ -914,12 +923,12 @@ public class ApiClient {
      public <T> void executeAsync(Call call, final Type returnType, final ApiCallback<T> callback) {
          call.enqueue(new Callback() {
