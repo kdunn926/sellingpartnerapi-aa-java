@@ -6,7 +6,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>patches</module>
-    <module>selling-partner-api-models/clients/sellingpartner-api-aa-java</module>
+    <!-- module>selling-partner-api-models/clients/sellingpartner-api-aa-java</module -->
     <module>swagger-spapi-generator</module>
   </modules>
 
