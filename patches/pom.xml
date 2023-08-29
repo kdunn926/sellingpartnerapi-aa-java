@@ -8,6 +8,15 @@
   <name>project-patches</name>
   <packaging>pom</packaging>
 
+  <dependencies>
+    <!-- jitpack workaround to ensure okhttp3 is fetched at beginning of build -->
+    <dependency>
+      <groupId>com.squareup.okhttp3</groupId>
+      <artifactId>okhttp</artifactId>
+      <version>4.10.0</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -23,19 +32,20 @@
             </goals>
             <configuration>
               <!-- executable>git</executable -->
-              <executable>patch</executable>
-              <workingDirectory>${project.basedir}/../selling-partner-api-models/</workingDirectory>
+              <executable>python</executable>
+              <workingDirectory>${project.basedir}</workingDirectory>
               <arguments>
-                <!-- argument>apply</argument -->
+                <argument>${project.basedir}/patch.py</argument>
                 <argument>-p1</argument>
-                <argument>-i</argument>
+                <argument>-d</argument>
+                <argument>${project.basedir}/../selling-partner-api-models/clients</argument>
                 <argument>${project.basedir}/okhttp4_support.patch</argument>
               </arguments>
             </configuration>
           </execution>
           <execution>
             <id>rebuild amzn/selling-partner-api-models</id>
-            <phase>initialize</phase>
+            <phase>compile</phase>
             <goals>
               <goal>exec</goal>
             </goals>
