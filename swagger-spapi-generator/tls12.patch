@@ -1,0 +1,13 @@
+--- target/generated-sources/swagger/src/main/java/com/amazonaws/SellingPartnerAPIAA/spapi/client/ApiClient.java	2023-09-11 10:47:55
++++ target/generated-sources/swagger/src/main/java/com/amazonaws/SellingPartnerAPIAA/spapi/client/ApiClient.java	2023-09-11 10:48:39
+@@ -86,6 +86,10 @@
+      */
+     public ApiClient() {
+         httpClient = new OkHttpClient();
++        ConnectionSpec requireTls12 = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
++            .tlsVersions(TlsVersion.TLS_1_2)
++            .build();
++        httpClient.setConnectionSpecs(Arrays.asList(requireTls12));
+
+
+         json = new JSON();

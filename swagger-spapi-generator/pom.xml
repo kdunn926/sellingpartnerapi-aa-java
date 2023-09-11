@@ -116,6 +116,24 @@
               </arguments>
             </configuration>
           </execution>
+          <!--
+              patch -p0 -i tls12.patch
+          -->
+          <execution>
+            <id>kluge fix for ensuring TLS1.2 in API clients</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>patch</executable>
+              <arguments>
+                <argument>-p0</argument>
+                <argument>-i</argument>
+                <argument>${project.basedir}/tls12.patch</argument>
+              </arguments>
+            </configuration>
+          </execution>
           <!-- 
                perl -pi -e
                's/()/(String)/'
