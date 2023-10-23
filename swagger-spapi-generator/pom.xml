@@ -13,7 +13,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <swagger.version>2.0.9</swagger.version>
-    <apis-to-include>authorization,ordersV0,reports_2021-06-30,feeds_2021-06-30,notifications,supplySource,tokens</apis-to-include>
+    <apis-to-include>authorization,ordersV0,reports_2021-06-30,feeds_2021-06-30,notifications,supplySource,tokens,product-type-definitions-api-model</apis-to-include>
   </properties>
 
   <dependencies>
